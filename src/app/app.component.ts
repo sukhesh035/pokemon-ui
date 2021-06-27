@@ -53,7 +53,7 @@ export class AppComponent {
   getPokemonList() {
     this.http
       .get(
-        `https://pokeapi.co/api/v2/pokemon?limit=${this.itemsPerPage}&offset=${
+        `http://localhost:3000/getPokemonList?Limit=${this.itemsPerPage}&Offset=${
           this.pageEvent?.pageIndex ?? 1
         }`
       )
@@ -70,9 +70,8 @@ export class AppComponent {
 
   getPokemonByName(name: String) {
     this.http
-      .get(`https://pokeapi.co/api/v2/pokemon/${name}`)
+      .get(`http://localhost:3000/getPokemonByName?Name=${name}`)
       .subscribe((res: any) => {
-        console.log(res);
         this.detailObj = res;
       });
   }
