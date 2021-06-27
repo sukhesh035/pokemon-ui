@@ -51,10 +51,20 @@ mat-grid-list {
   width: 100%;
 }
 mat-grid-tile {
-  background: lightblue;
+  background: url(https://connecteam.com/wp-content/uploads/2021/02/time-clock-background.png);
   height: auto;
   width: 100%;
 }
 .center {
   text-align: center;
+}
+
+mat-list {
+  height: 200px;
+  overflow-y: scroll;
+}
+
+img {
+  height: 230px;
+  width: auto;
 }

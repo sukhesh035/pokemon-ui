@@ -1,7 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -12,7 +18,10 @@ import { MatTableDataSource } from '@angular/material/table';
     trigger('detailExpand', [
       state('collapsed', style({ height: '0px', minHeight: '0' })),
       state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+      transition(
+        'expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+      ),
     ]),
   ],
 })
@@ -22,14 +31,19 @@ export class AppComponent {
   public columnsToDisplay = ['name', 'url'];
   public expandedElement: null = null;
   public detailObj: any = {};
-
+  public totalCount: number = 0;
+  public itemsPerPage: number = 15;
+  public pageEvent: PageEvent = {
+    pageIndex: 0,
+    pageSize: this.itemsPerPage,
+    length: this.totalCount,
+  };
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.getPokemonList()
+    this.getPokemonList();
   }
 
   ngAfterViewInit() {
@@ -37,16 +51,29 @@ export class AppComponent {
   }
 
   getPokemonList() {
-    this.http.get("https://pokeapi.co/api/v2/pokemon?limit=10&offset=1").subscribe((res: any) => {
-      this.dataSource = new MatTableDataSource(res.results);
-    })
+    this.http
+      .get(
+        `https://pokeapi.co/api/v2/pokemon?limit=${this.itemsPerPage}&offset=${
+          this.pageEvent?.pageIndex ?? 1
+        }`
+      )
+      .subscribe((res: any) => {
+        this.totalCount = res.count;
+        this.dataSource = new MatTableDataSource(res.results);
+      });
   }
 
-  getPokemonByName(name: String){
-    this.http.get(`https://pokeapi.co/api/v2/pokemon/${name}`).subscribe((res: any) => {
-      console.log(res)
-      this.detailObj = res;
-    })
+  pageChangeEvent(event: PageEvent) {
+    this.pageEvent = event;
+    this.getPokemonList();
   }
 
+  getPokemonByName(name: String) {
+    this.http
+      .get(`https://pokeapi.co/api/v2/pokemon/${name}`)
+      .subscribe((res: any) => {
+        console.log(res);
+        this.detailObj = res;
+      });
+  }
 }

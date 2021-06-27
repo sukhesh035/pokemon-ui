@@ -1,45 +1,86 @@
-<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
-  <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
-    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+<table
+  mat-table
+  [dataSource]="dataSource"
+  multiTemplateDataRows
+  class="mat-elevation-z8"
+>
+  <ng-container
+    matColumnDef="{{ column }}"
+    *ngFor="let column of columnsToDisplay"
+  >
+    <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+    <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
   </ng-container>
 
   <ng-container matColumnDef="expandedDetail">
-    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
-      <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+    <td
+      mat-cell
+      *matCellDef="let element"
+      [attr.colspan]="columnsToDisplay.length"
+    >
+      <div
+        class="example-element-detail"
+        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+      >
         <mat-grid-list cols="2" rowHeight="2:1" class="center">
           <mat-grid-tile>
             <div>
               <h1>Experience</h1>
-              <h3>{{detailObj.base_experience}}</h3>
+              <h3>{{ detailObj.base_experience }}</h3>
             </div>
           </mat-grid-tile>
-          <mat-grid-tile><div>
+          <mat-grid-tile
+            ><div>
               <h1>Height</h1>
-              <h3>{{detailObj.height}}</h3>
-            </div></mat-grid-tile>
+              <h3>{{ detailObj.height }}</h3>
+            </div></mat-grid-tile
+          >
           <mat-grid-tile>
             <div>
-            <h2>Moves</h2>
+              <h2>Moves (Scroll to see all the moves)</h2>
               <mat-list role="list">
-                <mat-list-item role="listitem">Item 1</mat-list-item>
-                <mat-list-item role="listitem">Item 2</mat-list-item>
-                <mat-list-item role="listitem">Item 3</mat-list-item>
+                <mat-list-item
+                  role="listitem"
+                  *ngFor="let move of detailObj.moves"
+                >
+                  <div>
+                    {{ move.move.name }}
+                  </div>
+                </mat-list-item>
               </mat-list>
             </div>
           </mat-grid-tile>
-          <mat-grid-tile>4</mat-grid-tile>
+          <mat-grid-tile
+            ><div>
+              <img
+                src="{{
+                  detailObj?.sprites?.front_default ||
+                    'https://static.wikia.nocookie.net/universeconquest/images/e/e6/Sample.jpg/revision/latest?cb=20171003194302'
+                }}"
+                alt=""
+              /></div
+          ></mat-grid-tile>
         </mat-grid-list>
       </div>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+  <tr
+    mat-row
+    *matRowDef="let element; columns: columnsToDisplay"
+    class="example-element-row"
     [class.example-expanded-row]="expandedElement === element"
-    (click)="expandedElement = expandedElement === element ? null : element; getPokemonByName(element.name)">
-  </tr>
-  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    (click)="
+      expandedElement = expandedElement === element ? null : element;
+      getPokemonByName(element.name)
+    "
+  ></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: ['expandedDetail']"
+    class="example-detail-row"
+  ></tr>
 </table>
 
-<mat-paginator [length]="1100" [pageSize]="30"></mat-paginator>
+<mat-paginator [length]="totalCount" [pageSize]="itemsPerPage" (page)="pageChangeEvent($event)"></mat-paginator>
